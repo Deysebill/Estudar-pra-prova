@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interativo</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #0b1e0b, #290421);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .quiz-container {
+            width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            color: black;
+            margin-top: 50px;
+        }
+
+        h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: #FF9800;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 18px;
+        }
+
+        li:hover {
+            background: #0e61b9;
+        }
+
+        button {
+            background-color: #008CBA;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #005f78;
+        }
+
+        #result {
+            font-size: 20px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h2 id="question">Pergunta</h2>
+        <ul id="answers"></ul>
+        <p id="result"></p>
+        <button onclick="nextQuestion()">Próxima Pergunta</button>
+    </div>
+
+    <script>
+        const quiz = [
+            { question: "LINUX É UM SISTEMA OPERACIONAL DE CÓDIGO ABERTO, BASEADO NO UNIX, QUE FOI CRIADO POR LINUS TORVALDS EM 1991. COM RELAÇÃO AS DISTRIBUIÇÕES DISPONÍVEIS DO LINUX, O KERNEL DESTAS: opção CORRETA:", answers: ["A) PODE SER DE VERSÕES DIFERENTES DE ACORDO COM A DISTRIBUIÇÃO;", "B) POSSUI SEMPRE A MESMA VERSÃO;", "C) É DEFINIDO COM BASE NA INTERFACE GRÁFICA ESCOLHIDA;", "D) DEPENDE DO SISTEMA DE ARQUIVOS ESCOLHIDO NA INSTALAÇÃO", "E) TODAS UTILIZAM A VERSÃO “ORIGINAL” APENAS SEM MODIFICAÇÕES;"], correct: "A) PODE SER DE VERSÕES DIFERENTES DE ACORDO COM A DISTRIBUIÇÃO;" },
+            { question: "A TÉCNICA DE DIVIDIR A MEMÓRIA PRINCIPAL EM VÁRIAS PARTES, COM UMA TAREFA DIFERENTE EM CADA PARTIÇÃO DE MEMÓRIA, SUJAS TAREFAS SÃO TROCADAS A TODO INSTANTE PELA CPU IMPLICANDO EM UM FALSO PARALELISMO EM SUAS EXECUÇÕES, É CONHECIDA COMO: ", answers: ["A) MONOPROGRAMAÇÃO;", "B) MONOUSUÁRIO;", "C) MULTIPROGRAMAÇÃO;", "D) MULTITHREAD;", "E) MULTIUSUÁRIO;"], correct: "C) MULTIPROGRAMAÇÃO;" },
+            { question: "A CRIAÇÃO DE PROCESSOS NO LINUX É UMA PARTE FUNDAMENTAL DA MULTIPROGRAMAÇÃO, PERMITINDO QUE MÚLTIPLOS PROGRAMAS E TAREFAS SEJAM EXECUTADOS CONCORRENTEMENTE NO SISTEMA OPERACIONAL. O QUE ACONTECE QUANDO A CHAMADA DE SISTEMA “FORK()” É USADA NO LINUX?", answers: ["A) COMBINA PROCESSOS FILHOS E PAIS;", "B) CRIA UM PROCESSO QUE É UMA CÓPIA EXATA DO PROCESSO QUE A CHAMOU;", "C) INTEGRA PROCESSOS COM THREADS;", "D) CRIA UM NOVO SISTEMA OPERACIONAL;", "E) TERMINA OS PROCESSOS EM EXECUÇÃO;"], correct: "B) CRIA UM PROCESSO QUE É UMA CÓPIA EXATA DO PROCESSO QUE A CHAMOU;" },
+            { question: "UMA ALTERNATIVA PARA O AUMENTO DE DESEMPENHO DE SISTEMA COMPUTACIONAIS É O USO DE PROCESSADORES COM MÚLTIPLOS NÚCLEOS, CHAMADOS MULTICORES. NESSES SISTEMAS, CADA NUCLEO, NORMALMENTE, TEM AS FUNCIONALIDADES COMPLETAS DE UM PROCESSADOR, JÁ SENDO COMUNS, ATUALMENTE, CONFIGURAÇÕES COM 2, 4 OU MAIS NÚCLEOS. COM RELAÇÃO AO USO DOS PROCESSADORES MULTICORES, E SABENDO QUE THREADS SÃO ESTRUTURAS DE EXECUÇÃO ASSOCIADAS A UM PROCESSO, QUE COMPARTILHAM SUAS ÁREAS DE CÓDIGO E DADOS, MAS MANTÉM CONTEXTOS INDEPENDENTES, ANALISE AS SEGUINTES ASSERÇÕES: I - AO DIVIDIREM SUAS ATIVIDADES EM MÚLTIPLAS THREADS QUE PODEM SER EXECUTADAS PARALELAMENTE, APLICAÇÕES PODEM SE BENEFICIAR MAIS EFETIVAMENTE DOS DIVERSOS NÚCLEOS DOS PROCESSADORES MULTICORES. PORQUE II - O SISTEMA OPERACIONAL NOS PROCESSADORES MULTICORES PODE ALOCAR OS NÚCLEOS EXISTENTES PARA EXECUTAR SIMULTANEAMENTE DIVERSAS SEQUÊNCIAS DE CÓDIGO, SOBREPONDO SUAS EXECUÇÕES E, NORMALMENTE, REDUZINDO O TEMPO DE RESPOSTA DAS APLICAÇÕES ÀS QUAIS ESTÃO ASSOCIADAS. ACERCA DESSAS ASSERÇÕES, ASSINALE A OPÇÃO CORRETA:", answers: ["A) AS DUAS ASSERÇÕES SÃO PROPOSIÇÕES VERDADEIRAS, E A SEGUNDA É UMA JUSTIFICATIVA CORRETA DA PRIMEIRA;", "B) AS DUAS ASSERÇÕES SÃO PROPOSIÇÕES VERDADEIRAS, MAS A SEGUNDA NÃO É UMA JUSTIFICATIVA CORRETA DA PRIMEIRA;", "C) A PRIMEIRA ASSERÇÃO É UMA PROPOSIÇÃO VERDADEIRA, E A SEGUNDA, UMA PROPOSIÇÃO FALSA;", "D) A PRIMEIRA ASSERÇÃO É UMA PROPOSIÇÃO FALSA, E A SEGUNDA, UMA PROPOSIÇÃO VERDADEIRA;", "E) TANTO A PRIMEIRA QUANTO A SEGUNDA ASSERÇÃO SÃO PROPOSIÇÕES FALSAS;"], correct: "A) AS DUAS ASSERÇÕES SÃO PROPOSIÇÕES VERDADEIRAS, E A SEGUNDA É UMA JUSTIFICATIVA CORRETA DA PRIMEIRA;" },
+            { question: "(FGV/2022) A ESTRATÉGIA DE GERENCIAMENTO ADOTADA EM SISTEMAS OPERACIONAIS MODERNOS QUE CONSISTE EM TRAZER MEMÓRIA PRINCIPAL CADA PROCESSO EM SUA TOTALIDADE, EXECUTÁ-LO POR UM TEMPO E ENTÃO COLOCÁ-LO DE VOLTA NO DISCO É DENOMINADA:", answers: ["A) OFFSET;", "B) BUFFERING;", "C) RELOCATION;", "D) SWAPPING;", "E) DEFRAGGING;"], correct: "D) SWAPPING;" },
+            { question: "CONCURSO: TRT - 14º REGIÃO (RO E AC) - 2011 - ANALISTA E TÉCNICO | PROVA: FCC - 2011 - TRT - 14º REGIÃO (RO E AC) - TÉCNICO JUDICIÁRIO - TECNOLOGIA DA INFORMAÇÃO - ADAPTADA A MEMÓRIA É UM RECURSO LIMITADO EM UM DISPOSITIVO COMPUTACIONAL E REALIZAR A SUA GERÊNCIA É FUNDAMENTAL PARA A MAXIMIZAÇÃO DA EFICIÊNCIA E EXECUÇÃO DOS PROCESSOS. A CERCA DA GERÊNCIA DE MEMÓRIA, A MEMORY MANAGEMENT UNIT (MMU) TEM COMO FUNÇÃO PRINCIPAL:", answers: ["A) PESQUISAR E SELECIONAR O PROCESSO QUE MELHOR SE AJUSTE AO TAMANHO DA PARTIÇÃO;", "B) GERENCIAR OS REGISTRADORES DE BASE E REGISTRADORES DE LIMITE;", "C) MAPEAR OS ENDEREÇOS VIRTUAIS PARA ENDEREÇOS FÍSICOS DE MEMÓRIA;", "D) DIVIDIR A MEMÓRIA EM PARTIÇÕES DE TAMANHOS VARIADOS;", "E) MAPEAR PÁGINAS VIRTUAIS EM MOLDURAS DE PÁGINA;"], correct: "C) MAPEAR OS ENDEREÇOS VIRTUAIS PARA ENDEREÇOS FÍSICOS DE MEMÓRIA;" },
+            { question: "OS COMPUTADORES ATUAIS TÊM UMA CAPACIDADE MUITO MAIOR DE ARMAZENAMENTO DO QUE OS PRIMEIROS COMPUTADORES QUE FORAM DESENVOLVIDOS. ESSA CAPACIDADE FOI AMPLIADA TANTO PARA OS DISCOS RIGIDOS QUANTO PARA OS DISCOS REMOVIVEIS/OUTRAS MÍDIAS, DESTA FORMA ESSE SISTEMA ORGANIZA E ESTRUTURA AS INFORMAÇÕES. O SISTEMA DE GERENCIAMENTO QUE ORGANIZA E ESTRUTURA AS INFORMAÇÕES NOS DISCOS RIGIDOS, DISCOS REMOVIVEIS E OUTRAS MÍDIAS É CHAMADO DE:", answers: ["A) SISTEMA DE ARQUIVOS;", "B) SISTEMA DE DADOS;", "C) SISTEMA DE COMPUTADORES;", "D) SISTEMA DE INFORMAÇÕES;", "E) SISTEMA OPERACIONAL;"], correct: "A) SISTEMA DE ARQUIVOS;" },
+            { question: "UM SCRIPT UTILIZA UM LOOP PARA EXIBIR DIVERSAS INFORMAÇOES. A CADA ITERAÇAO DO LOOP UM COMANDO ‘ECHO’ É EXECUTADO PARA ESCREVER INFORMAÇÕES NO TERMINAL. NO ENTANTO, O ADMINISTRADOR. VERIFICOU QUE AS INFORMAÇÕES SÃO ESCRITAS COM MUITA VELOCIDADE, TORNANDO IMPOSSÍVEL A SUA LEITURA POR UM USUÁRIO. QUAL COMANDO PODE SER USADO, A CADA ITERAÇÃO, PARA QUE O SCRIPT FAÇA UM PAUSA DE 1 SEGUNDO, ANTES DE INICIAR SUA PRÓXIMA ITERAÇÃO?", answers: ["A) PAUSE 1", "B) RETURN", "C) EXIT 1", "D) SLEEP 1", "E) READ 1"], correct: "D) SLEEP 1" },
+            { question: "O SISTEMA OPERACIONAL PODE GERENCIAR E ALOCAR PARTES DE TODO UM SISTEMA COMPLEXO. A ESSE RECURSO DÁ-SE O NOME DE:", answers: ["A) GERENCIADOR DE PROJETOS;", "B) MODO USUÁRIO;", "C) PAINEL DE ANÁLISE;", "D) DASHBOARD;", "E) GERENCIADOR DE RECURSOS;"], correct: "E) GERENCIADOR DE RECURSOS;" },
+            { question: "EM SISTEMAS DE COMPUTAÇÃO, UM SUBPROCESSO REFERE-SE GERALMENTE A UM PROCESSO QUE É CRIADO POR UM PROCESSO “PAI”. ESSA RELAÇÃO ENTRE PROCESSO E SUBPROCESSO PODE SER USADA PARA DESCREVER UMA HIERARQUIA OU DEPENDÊNCIA ENTRE ELES. O QUE DIFERENCIA SUBPROCESSOS DE THREADS EM RELAÇÃO AO ESPAÇO DE ENDEREÇAMENTO;", answers: ["A) THREADS POSSUUEM ESPAÇOS INDEPENDENTES E PROTEGIDOS;", "B) SUBPROCESSOS E THREADS POSSUEM ESPAÇOS DE ENDEREÇAMENTO TOTALMENTE PROTEGIDOS;", "C) SUBPROCESSOS TÊM ESPAÇOS INDEPENDENTES ENQUANTO THREADS COMPARTILHAM O ESPAÇO DO PROCESSO PAI;", "D) SUBPROCESSOS E THREADS COMPARTILHAM O MESMO ESPAÇO DE ENDEREÇAMENTO;"], correct: "D) SUBPROCESSOS E THREADS COMPARTILHAM O MESMO ESPAÇO DE ENDEREÇAMENTO;" },
+            
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function nextQuestion() {
+            if (currentQuestionIndex < quiz.length) {
+                document.getElementById("result").textContent = ""; // Limpa o resultado anterior
+                document.getElementById("question").textContent = quiz[currentQuestionIndex].question;
+                const shuffledAnswers = quiz[currentQuestionIndex].answers.sort(() => Math.random() - 0.5);
+                const answersList = document.getElementById("answers");
+                answersList.innerHTML = "";
+                shuffledAnswers.forEach(answer => {
+                    const li = document.createElement("li");
+                    li.textContent = answer;
+                    li.onclick = () => checkAnswer(answer);
+                    answersList.appendChild(li);
+                });
+            } else {
+                showFinalScore();
+            }
+        }
+
+        function checkAnswer(selectedAnswer) {
+            if (selectedAnswer === quiz[currentQuestionIndex].correct) {
+                document.getElementById("result").textContent = "✔️ Correto!";
+                score++;
+            } else {
+                document.getElementById("result").textContent = "❌ Errado!";
+            }
+            currentQuestionIndex++;
+        }
+
+        function showFinalScore() {
+            document.getElementById("question").textContent = "Fim do Quiz!";
+            document.getElementById("answers").innerHTML = "";
+            document.getElementById("result").textContent = `Você acertou ${score} de 18 perguntas! Nota final: ${score}`;
+        }
+
+        nextQuestion(); 
+    </script>
+</body>
+</html>
